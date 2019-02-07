@@ -45,6 +45,26 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         $dummy = $container->make(DummyClass::class);
         $this->assertSame($dummy, $container->make(DummyClass::class));
     }
+
+    /** @test */
+    public function resolve_class_instance_by_name_without_binding(){
+        // create new container instance and do not bind anything into it
+        $container = new \App\Container();
+        // create a new dummy instance through make() function
+        $dummy = $container->make(DummyClass::class);
+        // check if $dummy is indeed an instance of DummyClass
+        $this->assertInstanceOf('DummyClass', $dummy);
+    }
+
+    /** @test */
+    public function resolve_dependencies_of_dependencies(){
+        $container = new \App\Container();
+        $baz = $container->make(Baz::class);
+        $this->assertInstanceOf('Baz', $baz);
+    }
 }
 
-class DummyClass{};
+class DummyClass{}
+class Foo {}
+class Bar { function __construct(Foo $foo) {} }
+class Baz { function __construct(Bar $bar) {} }
